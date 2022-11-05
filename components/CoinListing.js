@@ -3,10 +3,6 @@ import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 import styles from '../styles/CoinListing.module.css'
 
-let classPrice = ''
-let classChange24h = ''
-let classChange1h = ''
-
 export default function CoinListing({ coin }) {
   const [priceState, setPriceState] = useState(0)
   
@@ -28,6 +24,14 @@ export default function CoinListing({ coin }) {
     if (priceRef.current) priceRef.current.offsetHeight
   }, [coin.price])
 
+  const chartData = coin.priceHistory?.map(x => {
+    const date = new Date(x.timestamp)
+    return {
+      date: date.toLocaleString(),
+      amount: x.price
+    }
+  })
+
   return (
     <div className={styles.card}>
       <div className={styles.cardInfo}>
@@ -44,7 +48,6 @@ export default function CoinListing({ coin }) {
         <div>
           <div className={styles.infoBlock}>
           <Text color='focus' weight={600}>24h High</Text>
-            {/* <b>24h High</b> */}
             <span>€{coin.priceHigh24h}</span>
           </div>
           <div className={styles.infoBlock}>
@@ -66,13 +69,7 @@ export default function CoinListing({ coin }) {
           <Box align='center' justify='center' height='100%'>
             <DataChart
               axis={false}
-              data={coin.priceHistory.map(x => {
-                const date = new Date(x.timestamp)
-                return {
-                  date: date.toLocaleString(),
-                  amount: x.price
-                }
-              })}
+              data={chartData}
               series={["date", { property: "amount", prefix: "€" }]}
               chart={[{ property: "amount", type: "line", thickness: "3px", round: true }]}
 

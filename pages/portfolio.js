@@ -47,7 +47,7 @@ export default function Portfolio() {
   const chartData = tracked ?
     tracked.priceHistory
       // .filter(x => x.timestamp >= startTimestamp)
-      .map(x => {
+      ?.map(x => {
         const date = new Date(x.timestamp)
         return {
           price: x.price * tracked.amount,

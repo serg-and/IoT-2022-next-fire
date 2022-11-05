@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import axios from 'axios'
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore'
+import { collection, doc, getDocs, setDoc, Timestamp } from 'firebase/firestore'
 import { db } from './firebaseConfig.js'
 // import { WebSocket } from 'ws'
 
@@ -52,8 +52,9 @@ import { db } from './firebaseConfig.js'
 // }
 
 const priceHistoryIntervals = {}
-const priceHistoryUpdateInterval = 60000  // 1 minute
-const localDataSet = {}
+const priceHistoryUpdateInterval = 60  // 1 minute
+
+export const localDataSet = {}
 const snapshot = await getDocs(collection(db, "coins"))
 snapshot.docs.forEach(doc => localDataSet[doc.id] =  doc.data())
 
@@ -64,7 +65,7 @@ async function getLatestPrices() {
   const { data } = await axios.get('https://ftx.com/api/markets')
   if (!data.success) return
   
-  const currentTimestamp = new Date().getTime()
+  const currentTimestamp = Timestamp.now()
   // get all EURO markets
   _.filter(data.result, market => market.quoteCurrency === 'EUR')
     .forEach(market => {
@@ -81,12 +82,12 @@ async function getLatestPrices() {
         }
 
         // add updated price to priceHistory array if the update interval has passed for given coin
-        if (!priceHistoryIntervals[market.baseCurrency] || currentTimestamp - priceHistoryIntervals[market.baseCurrency] > priceHistoryUpdateInterval) {
+        if (!priceHistoryIntervals[market.baseCurrency] || currentTimestamp.seconds - priceHistoryIntervals[market.baseCurrency] > priceHistoryUpdateInterval) {
           newDataObject.priceHistory.push({
             price: market.price,
             timestamp: currentTimestamp
           })
-          priceHistoryIntervals[market.baseCurrency] = currentTimestamp
+          priceHistoryIntervals[market.baseCurrency] = currentTimestamp.seconds
         }
 
         localDataSet[market.baseCurrency] = newDataObject

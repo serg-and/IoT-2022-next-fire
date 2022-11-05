@@ -5,9 +5,10 @@ import { db } from "../../utils/firebaseConfig";
 import { Box, Button, Text, TextInput } from "grommet";
 
 export default function TrackCoin() {
-  const router = useRouter()
-  const { coinId } = router.query
   const [amount, setAmount] = useState()
+  const router = useRouter()
+  let { coinId } = router.query
+  coinId = coinId?.toUpperCase()
 
   async function startTracking() {
     const coinSnapshot = await getDoc(doc(db, 'coins', coinId))
