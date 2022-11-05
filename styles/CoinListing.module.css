@@ -1,0 +1,75 @@
+.card {
+    display: grid;
+    grid-template-columns: auto 25%;
+    border-radius: var(--card-radius);
+    background-color: navy;
+    font-size: 110%;
+}
+
+.cardInfo {
+    display: grid;
+    grid-template-columns: repeat(4, auto) 5rem;
+    column-gap: 1rem;
+    padding: 1rem;
+}
+
+.chart {
+    background-color: black;
+    border-radius: 0px var(--card-radius) var(--card-radius) 0px;
+    padding: 1rem
+}
+
+.infoBlock {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    scale: .8
+}
+
+.card b {
+    color: grey;
+    scale: .8;
+}
+
+.price {
+    animation: priceChange .8s 1.5s forwards;
+}
+
+.price.up::before,
+.price.down::before {
+    content: none;
+}
+
+.up {
+    color: green;
+}
+
+.down {
+    color: red;
+}
+
+.up::before {
+    content: "▲";
+    display: inline-block;
+    line-height: 1;
+    -webkit-transform: scale(.8) translateX(-.2rem);
+    transform: scale(.8) translateX(-.2rem);
+    vertical-align: middle;
+}
+
+.down::before {
+    content: "▼";
+    display: inline-block;
+    line-height: 1;
+    -webkit-transform: scale(.8) translateX(-.2rem);
+    transform: scale(.8) translateX(-.2rem);
+    vertical-align: middle;
+}
+
+@keyframes priceChange {
+    to {color: white;}
+}
+
+.trackButton {
+    color: red;
+}

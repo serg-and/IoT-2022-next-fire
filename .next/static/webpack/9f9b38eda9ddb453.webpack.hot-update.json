@@ -1,0 +1,1 @@
+{"c":["pages/coins","webpack"],"r":["pages/track/[coinId]"],"m":["./node_modules/next/dist/build/webpack/loaders/next-client-pages-loader.js?absolutePagePath=%2FUsers%2Fserge%2FSchool%2Fdev%2Fnext-fire%2Fpages%2Ftrack%2F%5BcoinId%5D.js&page=%2Ftrack%2F%5BcoinId%5D!","./pages/track/[coinId].js"]}
