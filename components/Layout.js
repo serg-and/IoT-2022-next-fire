@@ -6,7 +6,7 @@ export default function Layout({ children }) {
     <Grommet full>
       <NavBar />
       <main>
-        <Box pad='medium' gap='medium'>
+        <Box pad='medium' gap='medium' margin={{ top: 'small' }}>
           {children}
         </Box>
       </main>

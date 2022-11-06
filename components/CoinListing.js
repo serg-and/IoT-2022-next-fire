@@ -5,6 +5,7 @@ import styles from '../styles/CoinListing.module.css'
 
 export default function CoinListing({ coin }) {
   const [priceState, setPriceState] = useState(0)
+  const [chartData, setChartData] = useState([])
   
   const priceRef = useRef()
   const previousRef = useRef()
@@ -22,20 +23,21 @@ export default function CoinListing({ coin }) {
     setTimeout(() => priceRef.current.style.animationName = '', 100)
 
     if (priceRef.current) priceRef.current.offsetHeight
+
+    setChartData(coin.priceHistory
+      ? coin.priceHistory.filter(x => x.price !== 1).map(x => {
+          const date = new Date(x.timestamp.seconds * 1000)
+          return {
+            date: date.toLocaleString(),
+            amount: x.price
+          }
+        })
+      : []
+    )
   }, [coin.price])
 
-  // const chartData = coin.priceHistory?.map(x => {
-  //   const date = new Date(x.timestamp.seconds * 1000)
-  //   return {
-  //     date: date.toLocaleString(),
-  //     amount: x.price
-  //   }
-  // })
-
-  const chartData = []
-
   return (
-    <div className={styles.card}>
+    <div className={`${styles.card} ${styles.cardSplitGrid}`}>
       <div className={styles.cardInfo}>
         <Text color='focus' weight={600}>{coin.id}</Text>
         <div ref={priceRef}

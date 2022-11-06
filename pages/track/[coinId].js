@@ -25,8 +25,6 @@ export default function TrackCoin() {
       const coinSnap = await getDoc(doc(db, 'coins', trackedData.coinId))
       const coinData = coinSnap.data()
 
-      console.log({ trackedData, coinData })
-
       setDoc(doc(db, 'tracked', tracked.id), {
         ...tracked.data(),
         endTimestamp: Timestamp.now(),

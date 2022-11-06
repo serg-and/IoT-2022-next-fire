@@ -1,8 +1,9 @@
 import { collection, doc, getDoc, getDocs, onSnapshot, query, setDoc, Timestamp, where } from 'firebase/firestore'
-import { Grommet, Box, Card, CardHeader, CardFooter, DataChart, Text, Grid, Button } from 'grommet'
+import { Grommet, Box, Card, CardHeader, CardFooter, DataChart, Text, Grid, Button, Heading } from 'grommet'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { db } from '../utils/firebaseConfig'
+import coinsStyles from '../styles/CoinListing.module.css'
 
 export default function Portfolio() {
   const [tracked, setTracked] = useState()
@@ -44,13 +45,13 @@ export default function Portfolio() {
 
   const startTimestamp = tracked?.startTimestamp?.seconds * 1000
 
+  console.log(tracked)
+
   const chartData = tracked ?
     tracked.priceHistory
       // .filter(x => x.timestamp >= startTimestamp)
-      ?.map(x => {
+      ?.filter(x => x.price % 1 === 0).map(x => {
         const date = new Date(x.timestamp.seconds * 1000)
-
-        console.log(date)
         return {
           price: x.price * tracked.amount,
           date: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
@@ -63,33 +64,29 @@ export default function Portfolio() {
       {tracked === false && (
         <Box gap='small'>
           <Text>No coin selected for tracking</Text>
+          <Link href='/coins'>
+            <Button
+              color='focus'
+              label='Start Tracking'
+              style={{ color: 'white', width: '15rem' }}
+            />
+          </Link>
         </Box>
       )}
-      <Link href='/coins'>
-        <Button
-          primary={tracked === false}
-          color='focus'
-          label='Track A New Coin'
-          style={{ color: 'white', width: '15rem' }}
-        />
-      </Link>
+      
       {tracked && (
-        <Box gap='medium'>
-          <Text size='1.8rem' weight={600}>Currently Tracking <Text color='focus' size='inherit'>{tracked.amount} {tracked.coinId}</Text></Text>
-          <Box direction='row' gap='medium'>
-            <Text color={tracked.price - tracked.startPrice >= 0 ? 'green' : 'red'}>
-              {(tracked.price / tracked.startPrice * 100) - 100}%
-            </Text>
-            <Text>
-              ${tracked.price * tracked.amount}
-            </Text>
-            <div
-              style={{ color: 'red', cursor: 'pointer', width: 'max-content' }}
-              onClick={stopTracking}
-            >
-              Stop Tracking
-            </div>
+        <Box gap='medium' pad='medium' className={coinsStyles.card}>
+          <Box direction='row' gap='medium' align='center'>
+            <Heading level={3} margin={{ vertical: 'xsmall' }}>
+              Currently Tracking <Text color='focus' size='inherit'>{tracked.amount} {tracked.coinId}</Text>
+            </Heading>
+            <Box direction='row' gap='medium'>
+              <Text size='1.2rem' className={tracked.price - tracked.startPrice >= 0 ? coinsStyles.up : coinsStyles.down}>
+                {Math.abs(((tracked.price / tracked.startPrice * 100) - 100).toFixed(3))}%
+              </Text>
+            </Box>
           </Box>
+
           {chartData && chartData.length ? (
             <Box>
               <DataChart
@@ -99,41 +96,83 @@ export default function Portfolio() {
                   { property: "price", type: "line", thickness: "5px", round: true },
                   { property: "price", type: "area", opacity: "medium", thickness: "xsmall" },
                 ]}
+                // size={{ width: 'calc(80vw)' }}
                 style={{ maxWidth: 'max-content' }}
               />
             </Box>
           ) : (
             "Not enough data points for chart"
           )}
+
+          <Text color='status-critical' onClick={stopTracking} style={{ cursor: 'pointer', width: 'max-content' }}>
+            Stop Tracking
+          </Text>
         </Box>
       )}
+
       <Box>
-        <h2>Previously tracked</h2>
+        <Heading level={3}>Previously Tracked</Heading>
         {previous.length ? (
           <Box gap='small'>
             {previous.map(tracked => {
               const delta = (tracked.endPrice / tracked.startPrice * 100) - 100
               return (
-                <Grid
-                  key={tracked.id}
-                  columns={['small', 'small', 'auto']}
-                  rows={['xxsmall']}
-                  areas={[
-                    { name: 'info1', start: [0, 0], end: [0, 0] },
-                    { name: 'info2', start: [1, 0], end: [1, 0] },
-                    { name: 'info3', start: [2, 0], end: [2, 0] }
-                  ]}
+                <div
+                  className={`${coinsStyles.card} ${coinsStyles.cardInfo}`}
+                  style={{ gridTemplateColumns: '12% 12% 30% 40%', minWidth: 'unset' }}
                 >
-                  <Box gridArea='info1'>
-                    <Text size={'1.2rem'} weight={600}>Coin: {tracked.coinId}</Text>
-                    <Box>Delta: {delta}%</Box>
+                  <Box width='100%' align='center' justify='center'>
+                    <Text color='focus' size='1.2rem' weight={600}>{tracked.coinId}</Text>
                   </Box>
-                  <Box gridArea='info2'>
-                    <Box>Starting price: ${tracked.startPrice}</Box>
-                    <Box>Ending price: ${tracked.endPrice}</Box>
+                  <Box width='100%' align='center' justify='center'>
+                    <Text
+                      size='1.2rem'
+                      className={delta >= 0 ? coinsStyles.up : coinsStyles.down}
+                      >
+                        {Math.abs(delta).toFixed(2)}%
+                      </Text>
                   </Box>
-                  <Box gridArea='info3'>{dateString(tracked.startTimestamp.seconds)} - {dateString(tracked.endTimestamp.seconds)}</Box>
-                </Grid>
+                  <div>
+                    <div className={coinsStyles.infoBlock}>
+                    <Text color='focus' weight={600}>Starting price</Text>
+                      <span>${tracked.startPrice}</span>
+                    </div>
+                    <div className={coinsStyles.infoBlock}>
+                      <Text color='focus' weight={600}>Ending price</Text>
+                      <span>${tracked.endPrice}</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div className={coinsStyles.infoBlock} style={{ maxWidth: '17rem' }}>
+                    <Text color='focus' weight={600}>From</Text>
+                      <span>{dateString(tracked.startTimestamp.seconds)}</span>
+                    </div>
+                    <div className={coinsStyles.infoBlock} style={{ maxWidth: '17rem' }}>
+                      <Text color='focus' weight={600}>Till</Text>
+                      <span>{dateString(tracked.endTimestamp.seconds)}</span>
+                    </div>
+                  </div>
+                  {/* <Grid
+                    key={tracked.id}
+                    columns={['small', 'small', 'auto']}
+                    rows={['xxsmall']}
+                    areas={[
+                      { name: 'info1', start: [0, 0], end: [0, 0] },
+                      { name: 'info2', start: [1, 0], end: [1, 0] },
+                      { name: 'info3', start: [2, 0], end: [2, 0] }
+                    ]}
+                  >
+                    <Box gridArea='info1'>
+                      <Text size={'1.2rem'} weight={600}>Coin: {tracked.coinId}</Text>
+                      <Box>Delta: {delta}%</Box>
+                    </Box>
+                    <Box gridArea='info2'>
+                      <Box>Starting price: ${tracked.startPrice}</Box>
+                      <Box>Ending price: ${tracked.endPrice}</Box>
+                    </Box>
+                    <Box gridArea='info3'>{dateString(tracked.startTimestamp.seconds)} - {dateString(tracked.endTimestamp.seconds)}</Box>
+                  </Grid> */}
+                </div>
               )
             })}
           </Box>
@@ -146,6 +185,6 @@ export default function Portfolio() {
 }
 
 function dateString(timestamp) {
-  const date = new Date(timestamp)
+  const date = new Date(timestamp * 1000)
   return date.toLocaleString()
 }
