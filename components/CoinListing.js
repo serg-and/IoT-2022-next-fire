@@ -24,13 +24,15 @@ export default function CoinListing({ coin }) {
     if (priceRef.current) priceRef.current.offsetHeight
   }, [coin.price])
 
-  const chartData = coin.priceHistory?.map(x => {
-    const date = new Date(x.timestamp)
-    return {
-      date: date.toLocaleString(),
-      amount: x.price
-    }
-  })
+  // const chartData = coin.priceHistory?.map(x => {
+  //   const date = new Date(x.timestamp.seconds * 1000)
+  //   return {
+  //     date: date.toLocaleString(),
+  //     amount: x.price
+  //   }
+  // })
+
+  const chartData = []
 
   return (
     <div className={styles.card}>
@@ -39,7 +41,7 @@ export default function CoinListing({ coin }) {
         <div ref={priceRef}
           className={`${styles.price} ${!!priceState ? priceState > 0 ? styles.up : styles.down : ''}`}
         >
-          €{coin.price}
+          ${coin.price}
         </div>
         <div>
           <Text color='focus' weight={600}>24h Change</Text>
@@ -48,11 +50,11 @@ export default function CoinListing({ coin }) {
         <div>
           <div className={styles.infoBlock}>
           <Text color='focus' weight={600}>24h High</Text>
-            <span>€{coin.priceHigh24h}</span>
+            <span>${coin.priceHigh24h}</span>
           </div>
           <div className={styles.infoBlock}>
             <Text color='focus' weight={600}>24h Low</Text>
-            <span>€{coin.priceLow24h}</span>
+            <span>${coin.priceLow24h}</span>
           </div>
         </div>
         <Link href={`/track/${coin.id}`}>
@@ -70,7 +72,7 @@ export default function CoinListing({ coin }) {
             <DataChart
               axis={false}
               data={chartData}
-              series={["date", { property: "amount", prefix: "€" }]}
+              series={["date", { property: "amount", prefix: "$" }]}
               chart={[{ property: "amount", type: "line", thickness: "3px", round: true }]}
 
               size={{ height: '45px' }}

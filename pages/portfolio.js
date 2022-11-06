@@ -48,10 +48,12 @@ export default function Portfolio() {
     tracked.priceHistory
       // .filter(x => x.timestamp >= startTimestamp)
       ?.map(x => {
-        const date = new Date(x.timestamp)
+        const date = new Date(x.timestamp.seconds * 1000)
+
+        console.log(date)
         return {
           price: x.price * tracked.amount,
-          date: date.toLocaleString()
+          date: `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
         }
       })
     : null
@@ -79,7 +81,7 @@ export default function Portfolio() {
               {(tracked.price / tracked.startPrice * 100) - 100}%
             </Text>
             <Text>
-              €{tracked.price * tracked.amount}
+              ${tracked.price * tracked.amount}
             </Text>
             <div
               style={{ color: 'red', cursor: 'pointer', width: 'max-content' }}
@@ -92,7 +94,7 @@ export default function Portfolio() {
             <Box>
               <DataChart
                 data={chartData}
-                series={["date", { property: "price", prefix: "€" }]}
+                series={["date", { property: "price", prefix: "$" }]}
                 chart={[
                   { property: "price", type: "line", thickness: "5px", round: true },
                   { property: "price", type: "area", opacity: "medium", thickness: "xsmall" },
@@ -127,8 +129,8 @@ export default function Portfolio() {
                     <Box>Delta: {delta}%</Box>
                   </Box>
                   <Box gridArea='info2'>
-                    <Box>Starting price: €{tracked.startPrice}</Box>
-                    <Box>Ending price: €{tracked.endPrice}</Box>
+                    <Box>Starting price: ${tracked.startPrice}</Box>
+                    <Box>Ending price: ${tracked.endPrice}</Box>
                   </Box>
                   <Box gridArea='info3'>{dateString(tracked.startTimestamp.seconds)} - {dateString(tracked.endTimestamp.seconds)}</Box>
                 </Grid>
