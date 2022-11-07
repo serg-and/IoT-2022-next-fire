@@ -1,4 +1,4 @@
-import { Box, Grommet } from "grommet";
+import { Anchor, Box, Footer, Grommet, Text } from "grommet";
 import NavBar from "./NavBar";
 
 export default function Layout({ children }) {
@@ -10,7 +10,10 @@ export default function Layout({ children }) {
           {children}
         </Box>
       </main>
-      {/* <div>This is the footer</div> */}
+      <Footer background='var(--extra-dark-blue)' pad='medium'>
+        <Text>Copyright 2022 Serge Andriessen - Creative Commons Attribution Non Commercial</Text>
+        <Anchor color='focus' label='GitHub' href="https://github.com/serg-and/IoT-2022-next-fire"/>
+      </Footer>
     </Grommet>
   )
 }
