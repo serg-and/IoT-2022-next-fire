@@ -3,6 +3,8 @@ import { useState } from "react";
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, Timestamp, where } from "firebase/firestore";
 import { db } from "../../utils/firebaseConfig";
 import { Box, Button, Text, TextInput } from "grommet";
+import coinsStyles from '../../styles/CoinListing.module.css'
+import Link from "next/link";
 
 export default function TrackCoin() {
   const [amount, setAmount] = useState()
@@ -47,7 +49,7 @@ export default function TrackCoin() {
 
   return (
     <Box align="center">
-      <Box gap='medium' width='20rem'>
+      <Box pad='medium' gap='medium' width='25rem' className={coinsStyles.card}>
         <h2>Start tracking <Text color='focus' size='1.5rem' weight={600}>{coinId}</Text></h2>
         <TextInput
           type='number'
@@ -61,6 +63,13 @@ export default function TrackCoin() {
           style={{ color: 'white' }}
           onClick={startTracking}
         />
+        <Link href='/coins'>
+          <Button
+            color='grey'
+            label='Cancel'
+            style={{ color: 'white' }}
+          />
+        </Link>
       </Box>
     </Box>
   )
