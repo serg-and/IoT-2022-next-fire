@@ -12,7 +12,7 @@ export default function Layout({ children }) {
       </main>
       <Footer background='var(--extra-dark-blue)' pad='medium'>
         <Text>Copyright 2022 Serge Andriessen - Creative Commons Attribution Non Commercial</Text>
-        <Anchor color='focus' label='GitHub' href="https://github.com/serg-and/IoT-2022-next-fire"/>
+        <Anchor color='focus' label='GitHub' target='_blank' href="https://github.com/serg-and/IoT-2022-next-fire"/>
       </Footer>
     </Grommet>
   )
